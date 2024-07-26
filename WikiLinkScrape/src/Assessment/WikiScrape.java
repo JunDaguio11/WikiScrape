@@ -15,6 +15,7 @@ public class WikiScrape {
 
 	public static void main(String[] args) throws IOException {
 		System.out.print("Enter Link: ");
+		// https://en.wikipedia.org/wiki/Major_League_Baseball
 
 		Scanner scan = new Scanner(System.in);
 		String linkURL = scan.nextLine();
@@ -23,9 +24,8 @@ public class WikiScrape {
 
 		if (isValidWikiURL(linkURL)) {
 			Boolean isValidCycle;
-			
+
 			List<String> linkList = new ArrayList<String>();
-			
 
 			do {
 				System.out.print("Enter number of cycles (1-3): ");
@@ -37,29 +37,29 @@ public class WikiScrape {
 				}
 			} while (!isValidCycle);
 
-			for(int i = 0;i<cycle;i++) {
+			for (int i = 0; i < cycle; i++) {
 				linkList = getLinksonPage(linkURL);
-				if(linkList.isEmpty()) {
-					i=cycle;
-				}else {
+				if (linkList.isEmpty()) {
+					i = cycle;
+				} else {
 					linkURL = linkList.get(i);
 				}
 				linkListAll.addAll(linkList);
 			}
-						
+
 		} else {
 			System.out.println("Link is a not valid Wiki link.");
 		}
 		scan.close();
 		System.out.println("\nNumber of Cycles: " + cycle);
 		System.out.println("Total Links: " + linkListAll.size());
-		
+
 		System.out.println("\nLinks:");
-		for(String link : linkListAll) {
+		for (String link : linkListAll) {
 			System.out.println(link);
 		}
 	}
-	
+
 	private static List<String> getLinksonPage(String linkURL) throws IOException {
 		URL pageURL = new URL(linkURL);
 		InputStream is = null;
@@ -67,13 +67,12 @@ public class WikiScrape {
 		Scanner inPage = new Scanner(pageURL.openStream());
 		List<String> links = new ArrayList<String>();
 		int counter = 1;
-		
+
 		is = pageURL.openStream();
 		br = new BufferedReader(new InputStreamReader(is));
 		String line;
-		
+
 		while ((line = br.readLine()) != null && counter <= 10) {
-			// line = inPage.next();
 			if (line.contains("href=\"/wiki/")) {
 				int from = line.indexOf("href=\"");
 				line = line.substring(from + 6);
@@ -81,7 +80,7 @@ public class WikiScrape {
 				int to = line.indexOf("\"");
 
 				String curLink = line.substring(0, to);
-				
+
 				if (links.contains("https://en.wikipedia.org" + curLink) == false
 						&& !(curLink.contains("Main_Page") || curLink.contains("Help:Contents")
 								|| curLink.contains("Help:Contents") || curLink.contains("Special:Search")
@@ -92,7 +91,6 @@ public class WikiScrape {
 				}
 			}
 
-			
 		}
 		inPage.close();
 		return links;
